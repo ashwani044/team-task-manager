@@ -30,19 +30,21 @@ export default function TaskBoard() {
 
   const fetchAll = async () => {
     try {
-      const [projectsRes, tasksRes] = await Promise.all([
-        api.get('/projects'),
-        api.get(`/tasks?project_id=${projectId}`),
-      ]);
-      const found = projectsRes.data.find(p => p.id === parseInt(projectId));
-      setProject(found);
-      setTasks(tasksRes.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const [projectsRes, tasksRes, membersRes] = await Promise.all([
+      api.get('/projects'),
+      api.get(`/tasks?project_id=${projectId}`),
+      api.get(`/projects/${projectId}/members`),
+    ]);
+    const found = projectsRes.data.find(p => p.id === parseInt(projectId));
+    setProject(found);
+    setTasks(tasksRes.data);
+    setMembers(membersRes.data);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const openCreateForm = () => {
     setEditingTask(null);
@@ -196,16 +198,21 @@ export default function TaskBoard() {
                   </select>
                 </div>
               </div>
-
+              
               <div style={styles.field}>
-                <label style={styles.label}>Assigned To (User ID)</label>
-                <input
+                <label style={styles.label}>Assigned To</label>
+                <select
                   style={styles.input}
-                  placeholder="Enter user ID (optional)"
-                  type="number"
                   value={form.assigned_to}
                   onChange={e => setForm({ ...form, assigned_to: e.target.value })}
-                />
+                 >
+                  <option value="">— Unassigned —</option>
+                  {members.map(m => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} ({m.email})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div style={styles.formBtns}>

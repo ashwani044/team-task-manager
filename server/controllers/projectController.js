@@ -88,5 +88,26 @@ const addMember = async (req, res) => {
     res.status(500).json({ message: 'Server error.' });
   }
 };
+const getMembers = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.name, u.email FROM users u
+       INNER JOIN project_members pm ON u.id = pm.user_id
+       WHERE pm.project_id = $1
+       UNION
+       SELECT u.id, u.name, u.email FROM users u
+       INNER JOIN projects p ON u.id = p.created_by
+       WHERE p.id = $2`,
+      [id, id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error.' });
+  }
+};
 
+// Update module.exports:
+module.exports = { getProjects, createProject, updateProject, deleteProject, addMember, getMembers };
 module.exports = { getProjects, createProject, updateProject, deleteProject, addMember };

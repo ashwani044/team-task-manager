@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const validate = require('../middleware/validate');
+
 const {
   getProjects,
   createProject,
@@ -15,12 +16,15 @@ const {
 router.get('/', authMiddleware, getProjects);
 
 router.post('/', authMiddleware, roleMiddleware('Admin'), [
-  body('name').trim().notEmpty().withMessage('Project name is required'),
-  body('description').optional().trim(),
+  body('name')
+    .trim()
+    .notEmpty().withMessage('Project name is required'),
 ], validate, createProject);
 
 router.put('/:id', authMiddleware, roleMiddleware('Admin'), [
-  body('name').trim().notEmpty().withMessage('Project name is required'),
+  body('name')
+    .trim()
+    .notEmpty().withMessage('Project name is required'),
 ], validate, updateProject);
 
 router.delete('/:id', authMiddleware, roleMiddleware('Admin'), deleteProject);
