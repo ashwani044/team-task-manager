@@ -2,6 +2,8 @@
 
 A full-stack team task management application with a Kanban-style task board, role-based access control, and project-based organisation. Built with React + Vite on the frontend and Node.js + Express + PostgreSQL on the backend.
 
+Live Project Link - https://hearty-celebration-production.up.railway.app/
+
 ---
 
 ## Table of Contents
